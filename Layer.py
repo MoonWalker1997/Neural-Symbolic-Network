@@ -85,6 +85,10 @@ class Layer:
         return ITO, ONodes_1, ONodes_weight_1, ONodes_2, ONodes_weight_2
 
     def analyze(self):
+        """
+        General layers (excluding the input layer) has an internal layer. So, it has two groups of weights.
+        One for the random O_SubLayer, another for the identity O_SubLayer.
+        """
         ret = [[], []]
         for each_object in self.random_O_SubLayer.objects:
             ret[0].append(each_object.analyze())

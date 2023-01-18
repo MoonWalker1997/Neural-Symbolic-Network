@@ -1,54 +1,45 @@
-import tqdm
-
-import pickle
-
 import numpy as np
 
-from NSN_2 import NSN_2
+from NSN_3 import NSN_3
 from Nodes.ONodes import ONodes
 
 ONodes_1 = ONodes()
-NSN_2 = NSN_2(ONodes_1,
-              "C:/Users/TORY/OneDrive - Temple University/AGI research/Neural Symbolic Network/models/"
-              "NSN_2_model_1.json")
-num_bit = 10  # 1024 possible training cases
-training = 700
-testing = 300
-epoch = 100
+NSN_3 = NSN_3(ONodes_1)
+num_bit = 3
 
 
-# structure, 10 inputs, 2 outputs
+# structure, 3 inputs, 1 outputs
 
 
 def logic_expression(num_bit):
     x = [np.random.choice([True, False], p=[0.5, 0.5]) for _ in range(num_bit)]
-    y = [x[0] and x[6], not (x[0] and x[6])]
+    y = [x[0] and x[1]]
     return x, y
 
 
 if __name__ == '__main__':
-    NSN_2.analyze(True)
-    NSN_2.show_structure()
-    for _ in range(epoch):
+    NSN_3.analyze(True)
+    NSN_3.show_structure()
+    for _ in range(20):
         # training process
-        for i in range(training):
+        for i in range(4):
             x, y = logic_expression(num_bit)
-            NSN_2.forward(x)
-            NSN_2.backward(y)
-        NSN_2.analyze(True)
+            NSN_3.forward(x)
+            # NSN_3.structure()
+            NSN_3.backward(y)
+            # NSN_3.structure()
+        NSN_3.analyze(True)
         # testing process
         succeed = 0
         fail = 0
-        for i in range(testing):
+        for i in range(8):
             x, y = logic_expression(num_bit)
-            NSN_2.forward(x)
-            tmp = [each.value for each in NSN_2.output_layer.output_SubLayer.objects]
-            tmp = [tmp[0] or tmp[1] or tmp[2] or tmp[3] or tmp[4], tmp[5] or tmp[6] or tmp[7] or tmp[8] or tmp[9]]
-            if all(np.array(y) == np.array(tmp)):
+            NSN_3.forward(x)
+            if np.array(y) == NSN_3.output_layer.output_SubLayer.objects[0].value:
                 succeed += 1
             else:
                 fail += 1
 
         print(succeed / (succeed + fail))
-    NSN_2.save(
-        "C:/Users/TORY/OneDrive - Temple University/AGI research/Neural Symbolic Network/models/NSN_2_model_1.npy")
+    # NSN_3.save(
+    #     "C:/Users/TORY/OneDrive - Temple University/AGI research/Neural Symbolic Network/models/NSN_3_model_1.npy")

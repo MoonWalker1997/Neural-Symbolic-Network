@@ -23,7 +23,11 @@ class IDENTITY_ONode(ONode):
         return self.input_objects[self.index].value
 
     def backward(self, expected_value):
-        if isinstance(self.input_objects[self.index], InputNode):
+        """
+        By calling this function, this means there must be some mistakes to correct.
+        """
+        if isinstance(self.input_objects[self.index], InputNode):  # If this mistake happens in the input layer.
+            # We cannot push the mistake further back, therefore, we can only change the weights, but values.
             self.input_weights[self.index] *= self.weight_decay
             # print("weight changed")
         else:

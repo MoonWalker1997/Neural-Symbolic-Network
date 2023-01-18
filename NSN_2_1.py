@@ -1,5 +1,3 @@
-import numpy as np
-
 from InputLayer import InputLayer
 from Layer import Layer
 from NSN import NSN
@@ -13,12 +11,17 @@ from NSN import NSN
 
 class NSN_2(NSN):
 
-    def __init__(self, ONodes, load_file_path=None):
+    def __init__(self, ONodes, load_file_path = None):
+        """
+        It contains 2 layers, 1) one input layer and 2) one output layer.
+        The size of the input layer is: 10 input symbols, 20 output symbols.
+        The size of the output layer is: 20 input symbols, 20 internal nodes, and 2 output symbols.
+        """
         super(NSN_2, self).__init__(ONodes)
         if load_file_path is None:
             self.input_layer = InputLayer(10, 20, ONodes)
             # self.internal_layers.append(Layer(10, 40, 20, ONodes))
-            self.output_layer = Layer(10, 20, 2, ONodes)
+            self.output_layer = Layer(20, 20, 2, ONodes)
         else:
             self.load(ONodes, load_file_path)
 

@@ -59,6 +59,9 @@ class InputLayer:
         return IO, ONodes, ONodes_weight
 
     def analyze(self):
+        """
+        The input layer does not have an internal layer. So, its weight only varies in the O_SubLayer.
+        """
         ret = []
         for each_object in self.O_SubLayer.objects:
             ret.append(each_object.analyze())

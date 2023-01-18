@@ -110,7 +110,7 @@ class NSN:
             if len(each) < max_len:
                 padding_left = (max_len - len(each)) // 2
                 padding_right = max_len - len(each) - padding_left
-                matrix[i] = [0 for _ in range(padding_left)] + matrix[i] + [0 for _ in range(padding_right)]
+                matrix[i] = [0.5 for _ in range(padding_left)] + matrix[i] + [0.5 for _ in range(padding_right)]
 
         if show:
             plt.imshow(matrix)

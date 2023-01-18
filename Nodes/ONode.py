@@ -44,6 +44,12 @@ class ONode(Node):
         # self.input_weights = [each/sum_tmp for each in tmp]
 
     def analyze(self):
+        """
+        Since one ONode may have many inputs. This analyzing function is to show whether there are some salient
+        inputs. If so, it will return 1.
+
+        Due to the [0.5]+[0.5/n-1] weights initialization. It should be all 1's at the beginning.
+        """
         if max(self.input_weights) / (self.input_weights[np.argsort(self.input_weights)[-2]] + 1e-5) >= 1.1:
             return 1
         else:
