@@ -25,3 +25,8 @@ class ONodes:
             return ARROW_ONode()
         else:
             return IDENTITY_ONode()
+
+    def nodes_dictionary(self):
+        return {"AND Operation": 0,
+                "ARROW Operation": 0,
+                "IDENTITY Operation": 0}

@@ -1,7 +1,7 @@
 import numpy as np
 
-from Nodes.InputNode import InputNode
 from Nodes.ONode import ONode
+from Nodes.SNode import SNode
 
 """
 A sample operation node in propositional logic NSN.
@@ -37,7 +37,7 @@ class AND_ONode(ONode):
                                     p=[self.input_weights[to_update], 1 - self.input_weights[to_update]])
         # keep the weight (choice) while change the value
         if approach == "value":
-            if isinstance(self.input_objects[to_update], InputNode):
+            if isinstance(self.input_objects[to_update], SNode):
                 approach = "weight"
             else:
                 value_remain = self.input_objects[self.index_1 if to_update == self.index_2 else self.index_2].value

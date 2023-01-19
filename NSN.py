@@ -1,118 +1,78 @@
-import json
+import random
 
-import numpy as np
+import networkx as nx
 from matplotlib import pyplot as plt
 
-from InputLayer import InputLayer
-from Layer import Layer
+
+def weights_initialization(num_objects):
+    tmp = [0.5 / (num_objects - 1) for _ in range(num_objects)]
+    tmp[random.randint(0, num_objects - 1)] = 0.5
+    return tmp
 
 
 def connect(layer_1, layer_2):
-    for i, each_object in enumerate(layer_2.input_SubLayer.objects):
-        each_object.value = layer_1.output_SubLayer.objects[i].value
-        each_object.parent_node = layer_1.output_SubLayer.objects[i]
+    # layer 2 is connected to layer 1
+    for i, each_object in enumerate(layer_2.objects):
+        each_object.input_weights = weights_initialization(layer_1.num_objects)
+        each_object.input_objects = layer_1.objects
 
 
 class NSN:
 
     def __init__(self, ONodes):
         self.ONodes = ONodes
-        self.input_layer = None
-        self.internal_layers = []
-        self.output_layer = None
+        self.layers = []
+        self.structure = []
+
+    def connect(self):
+        for i in range(len(self.layers) - 1):
+            connect(self.layers[i], self.layers[i + 1])
+        for each in self.layers:
+            self.structure.append(each.num_objects)
 
     def forward(self, input_symbols):
-        self.input_layer.forward(input_symbols)
-        if len(self.internal_layers) != 0:
-            connect(self.input_layer, self.internal_layers[0])
-            for i in range(len(self.internal_layers) - 1):
-                self.internal_layers[i].forward()
-                connect(self.internal_layers[i], self.internal_layers[i + 1])
-            self.internal_layers[-1].forward()
-            connect(self.internal_layers[-1], self.output_layer)
-        else:
-            connect(self.input_layer, self.output_layer)
-        self.output_layer.forward()
+        self.layers[0].forward(input_symbols)
+        for i in range(1, len(self.layers)):
+            self.layers[i].forward()
 
-    def backward(self, expected_values):
-        self.output_layer.backward(expected_values)
+    def draw(self):
+        weights = []
+        for i in range(1, len(self.layers)):
+            tmp = []
+            for each_object in self.layers[i].objects:
+                tmp.append(each_object.input_weights)
+            tmp = zip(*tmp)
+            for each in tmp:
+                weights += each
 
-    def show_structure(self):
-        print(self.input_layer.O_SubLayer.structure("input_layer"))
-        for i in range(len(self.internal_layers)):
-            print(self.internal_layers[i].random_O_SubLayer.structure("layer_" + str(i + 1)))
-        print(self.output_layer.random_O_SubLayer.structure("output_layer"))
-        print("--->")
+        left, right, bottom, top, layer_sizes = .1, .9, .1, .9, self.structure
 
-    def save(self, path):
-        # save the input layer
-        IO, input_ONodes, input_ONodes_weight = self.input_layer.__save__()
-        # save the internal layers
-        ITO_internal = []
-        internal_ONodes_1 = []
-        internal_ONodes_weight_1 = []
-        internal_ONodes_2 = []
-        internal_ONodes_weight_2 = []
-        for i in range(len(self.internal_layers)):
-            ITO, internal_ONodes_1_i, internal_ONodes_weight_1_i, internal_ONodes_2_i, internal_ONodes_weight_2_i = \
-                self.internal_layers[i].__save__()
-            ITO_internal.append(ITO)
-            internal_ONodes_1.append(internal_ONodes_1_i)
-            internal_ONodes_weight_1.append(internal_ONodes_weight_1_i)
-            internal_ONodes_2.append(internal_ONodes_2_i)
-            internal_ONodes_weight_2.append(internal_ONodes_weight_2_i)
-        # save the output layer
-        ITO, output_ONodes_1, output_ONodes_weight_1, output_ONodes_2, output_ONodes_weight_2 = \
-            self.output_layer.__save__()
-        save_file = {"input": [IO, input_ONodes, input_ONodes_weight],
-                     "internal": [ITO_internal, internal_ONodes_1, internal_ONodes_weight_1,
-                                  internal_ONodes_2, internal_ONodes_weight_2],
-                     "output": [ITO, output_ONodes_1, output_ONodes_weight_1, output_ONodes_2, output_ONodes_weight_2]}
-        save_file_json = json.dumps(save_file)
-        f = open(path, "w")
-        f.write(save_file_json)
+        G = nx.Graph()
+        v_spacing = (top - bottom) / float(max(layer_sizes))
+        h_spacing = (right - left) / float(len(layer_sizes) - 1)
 
-    def load(self, ONodes, load_file_path):
-        load_file = open(load_file_path, "r")
-        load_file = json.load(load_file)
-        IO, input_ONodes, input_ONodes_weight = load_file["input"]
-        ITO_internal, internal_ONodes_1, internal_ONodes_weight_1, internal_ONodes_2, internal_ONodes_weight_2 = \
-            load_file["internal"]
-        ITO, output_ONodes_1, output_ONodes_weight_1, output_ONodes_2, output_ONodes_weight_2 = load_file["output"]
-        self.input_layer = InputLayer(IO[0], IO[1], ONodes, input_ONodes, input_ONodes_weight)
-        for i in range(len(internal_ONodes_1)):
-            self.internal_layers.append(Layer(ITO_internal[i][0],
-                                              ITO_internal[i][1],
-                                              ITO_internal[i][2], ONodes,
-                                              internal_ONodes_1[i], internal_ONodes_weight_1[i],
-                                              internal_ONodes_2[i], internal_ONodes_weight_2[i]))
-        self.output_layer = Layer(ITO[0], ITO[1], ITO[2], ONodes,
-                                  output_ONodes_1, output_ONodes_weight_1,
-                                  output_ONodes_2, output_ONodes_weight_2)
+        node_count = 0
 
-    def analyze(self, show = False):
-        matrix = [self.input_layer.analyze()]
-        max_len = len(matrix[0])
-        for each_layer in self.internal_layers:
-            tmp = each_layer.analyze()
-            matrix.append(tmp[0])
-            max_len = max(max_len, len(tmp[0]))
-            matrix.append(tmp[1])
-            max_len = max(max_len, len(tmp[1]))
-        tmp = self.output_layer.analyze()
-        matrix.append(tmp[0])
-        max_len = max(max_len, len(tmp[0]))
-        matrix.append(tmp[1])
-        max_len = max(max_len, len(tmp[1]))
+        for i, v in enumerate(layer_sizes):
+            layer_top = v_spacing * (v - 1) / 2. + (top + bottom) / 2.
+            for j in range(v):
+                G.add_node(node_count, pos=(left + i * h_spacing, layer_top - j * v_spacing))
+                node_count += 1
 
-        # matrix processing
-        for i, each in enumerate(matrix):
-            if len(each) < max_len:
-                padding_left = (max_len - len(each)) // 2
-                padding_right = max_len - len(each) - padding_left
-                matrix[i] = [0.5 for _ in range(padding_left)] + matrix[i] + [0.5 for _ in range(padding_right)]
+        for x, (left_nodes, right_nodes) in enumerate(zip(layer_sizes[:-1], layer_sizes[1:])):
+            for i in range(left_nodes):
+                for j in range(right_nodes):
+                    G.add_edge(i + sum(layer_sizes[:x]), j + sum(layer_sizes[:x + 1]))
 
-        if show:
-            plt.imshow(matrix)
-            plt.show()
-        return matrix
+        pos = nx.get_node_attributes(G, 'pos')
+        plt.figure()
+        nx.draw(G, pos,
+                node_color=range(node_count),
+                with_labels=True,
+                node_size=200,
+                edge_color=weights,
+                width=3,
+                cmap=plt.cm.Dark2,
+                edge_cmap=plt.cm.Blues
+                )
+        plt.show()

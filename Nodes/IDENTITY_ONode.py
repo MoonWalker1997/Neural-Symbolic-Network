@@ -1,7 +1,8 @@
 import numpy as np
 
-from Nodes.InputNode import InputNode
+
 from Nodes.ONode import ONode
+from Nodes.SNode import SNode
 
 
 class IDENTITY_ONode(ONode):
@@ -26,7 +27,7 @@ class IDENTITY_ONode(ONode):
         """
         By calling this function, this means there must be some mistakes to correct.
         """
-        if isinstance(self.input_objects[self.index], InputNode):  # If this mistake happens in the input layer.
+        if isinstance(self.input_objects[self.index], SNode):  # If this mistake happens in the input layer.
             # We cannot push the mistake further back, therefore, we can only change the weights, but values.
             self.input_weights[self.index] *= self.weight_decay
             # print("weight changed")
