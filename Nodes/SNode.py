@@ -8,8 +8,3 @@ class SNode(Node):
 
     def __init__(self):
         super(SNode, self).__init__()
-        self.value = None  # e.g., string, number, ...
-        self.parent_node = None
-
-    def boost(self):
-        self.parent_node.boost()

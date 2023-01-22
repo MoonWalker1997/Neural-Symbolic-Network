@@ -1,16 +1,21 @@
-class IdentityLayer:
+import random
+
+from Nodes.CNode import CNode
+
+
+class CompoundLayer:
     """
-    The identity layer is used for changing the size.
-    For example, you have 100 internal symbols, but your label is only 10 digit.
-    Then you can use 10 identity O_Node to do so.
+    Currently, there are hierarchies for compounds are considered.
+
+    A compound layer will process all inputs in this layer and provide several compounds.
     """
 
-    def __init__(self, num_objects, ONodes):
+    def __init__(self, num_objects):
         self.num_objects = num_objects
-        self.objects = [ONodes.produce("IDENTITY") for _ in range(num_objects)]
+        self.objects = [CNode() for _ in range(num_objects)]
 
     def forward(self):
-        for i, each_object in enumerate(self.objects):
+        for each_object in self.objects:
             each_object.value = each_object.forward()
 
     def backward(self, expected_values):

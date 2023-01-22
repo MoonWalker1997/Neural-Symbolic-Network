@@ -3,18 +3,26 @@ import random
 import networkx as nx
 from matplotlib import pyplot as plt
 
+from Layers.CompoundLayer import CompoundLayer
 
-def weights_initialization(num_objects):
-    tmp = [0.5 / (num_objects - 1) for _ in range(num_objects)]
-    tmp[random.randint(0, num_objects - 1)] = 0.5
-    return tmp
+
+def weights_initialization(num_objects, cpd_layer = False):
+    if not cpd_layer:
+        tmp = [0.5 / (num_objects - 1) for _ in range(num_objects)]
+        tmp[random.randint(0, num_objects - 1)] = 0.5
+        return tmp
+    else:
+        return [random.random() for _ in range(num_objects)]
 
 
 def connect(layer_1, layer_2):
     # layer 2 is connected to layer 1
     for i, each_object in enumerate(layer_2.objects):
-        each_object.input_weights = weights_initialization(layer_1.num_objects)
+        tmp = isinstance(layer_2, CompoundLayer)
+        each_object.input_weights = weights_initialization(layer_1.num_objects, cpd_layer=tmp)
         each_object.input_objects = layer_1.objects
+        if tmp:
+            each_object.pattern = [random.random() for _ in range(layer_1.num_objects)]
 
 
 class NSN:

@@ -3,7 +3,7 @@ import time
 import numpy as np
 
 from Nodes.ONodes import ONodes
-from models.Propositional_Logic_NSN_3_3_1 import Propositional_Logic_NSN
+from models.Propositional_logic_NSN_10_5_3_1 import Propositional_Logic_NSN
 from util.LogicExpressionTrainer import LogicExpressionTrainer
 
 ONodes = ONodes()
@@ -25,15 +25,12 @@ num_bit = 10
 num_training = 4
 num_testing = 2000
 
-num_epoch = 20
+num_epoch = 5
 
 LET = LET(num_bit, num_training, num_testing)
 
 if __name__ == '__main__':
     NSN.draw()
-    # print(NSN.hidden_layer.objects[0].name)
-    # print(NSN.hidden_layer.objects[1].name)
-    # print(NSN.hidden_layer.objects[2].name)
     for _ in range(num_epoch):
         # training process
         for i in range(num_training):

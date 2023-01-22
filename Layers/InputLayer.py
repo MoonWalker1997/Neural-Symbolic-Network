@@ -18,6 +18,3 @@ class InputLayer:
     def backward(self, expected_values):
         # only change weights here
         pass
-
-    def show(self):
-        print([each.value for each in self.objects])

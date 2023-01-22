@@ -14,7 +14,7 @@ class RandomLayer:
             self.nodes_dictionary[each.name] += 1
 
     def forward(self):
-        for i, each_object in enumerate(self.objects):
+        for each_object in self.objects:
             each_object.value = each_object.forward()
 
     def backward(self, expected_values):
@@ -23,6 +23,3 @@ class RandomLayer:
                 self.objects[i].backward(each_expected_value)
             else:
                 self.objects[i].boost()
-
-    def show(self):
-        print([each.value for each in self.output_SubLayer.objects])
