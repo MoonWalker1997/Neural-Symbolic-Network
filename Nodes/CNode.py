@@ -30,9 +30,9 @@ class CNode(Node):
         self.indices = []  # as a compound may have many components, it has many indices
         self.score = 0
         self.threshold = 0.5
-        self.weight_decay = 0.9
-        self.pattern_lr = 0.1
-        self.award = 1.1
+        self.weight_decay = 0.7
+        self.pattern_lr = 0.5
+        self.award = 1.5
 
     def forward(self):
         for i in range(len(self.input_weights)):
@@ -62,7 +62,7 @@ class CNode(Node):
         * When the weight is really high, and when the pattern is really confident, and my pattern is consistent with
         the input, then this position will not be updated.
         """
-        for each in range(len(self.indices)):
+        for each in self.indices:
             if random.random() < self.input_weights[each]:
                 # my attention is good
                 if random.random() * 0.5 < abs(self.pattern[each] - 0.5):

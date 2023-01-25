@@ -1,3 +1,5 @@
+import random
+
 import numpy as np
 
 
@@ -34,6 +36,11 @@ class IDENTITY_ONode(ONode):
         else:
             approach = np.random.choice(["value", "weight"],
                                         p=[self.input_weights[self.index], 1 - self.input_weights[self.index]])
+            # ==============================================================================================================
+            if approach == "weight":
+                if random.random() < self.safeguard:
+                    approach = "value"
+            # ==============================================================================================================
             if approach == "value":
                 self.input_objects[self.index].backward(expected_value)
                 self.input_weights[self.index] *= self.value_decay

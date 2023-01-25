@@ -30,6 +30,9 @@ class LogicExpressionTrainer:
             return tmp, self.expression(tmp)
 
     def repeat(self, shuffle = False):
+        """
+        Remain the iterator if not shuffle. The same data will be forwarded again.
+        """
         if shuffle:
             random.shuffle(self.training)
             random.shuffle(self.testing)

@@ -13,6 +13,7 @@ class ONode(Node):
         # operation nodes have no values, but they may have different names
         # e.g., "AND operation node", "OR operation node"
         super(ONode, self).__init__()
+        self.safeguard = 0.7
 
     @abstractmethod
     def forward(self):

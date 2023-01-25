@@ -1,5 +1,8 @@
 import random
 
+import matplotlib.pyplot as plt
+import numpy as np
+
 from Nodes.CNode import CNode
 
 
@@ -24,3 +27,10 @@ class CompoundLayer:
                 self.objects[i].backward(each_expected_value)
             else:
                 self.objects[i].boost()
+
+    def show(self, img_size):
+        tmp = np.array([0.0 for _ in range(img_size[0] * img_size[1])])
+        for each in self.objects:
+            tmp += np.array(each.input_weights)
+        tmp = np.reshape(tmp, img_size)
+        return tmp

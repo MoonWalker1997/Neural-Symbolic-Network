@@ -1,3 +1,5 @@
+import random
+
 import numpy as np
 
 from Nodes.ONode import ONode
@@ -15,9 +17,9 @@ class AND_ONode(ONode):
         self.name = "AND Operation"
         self.index_1 = -1
         self.index_2 = -1
-        self.value_decay = 0.5
-        self.weight_decay = 0.3
-        self.award = 1.5
+        self.value_decay = 0.9
+        self.weight_decay = 0.8
+        self.award = 1.1
 
     def forward(self):
         # find the indices of involved objects
@@ -35,9 +37,22 @@ class AND_ONode(ONode):
         # figure out the way to update
         approach = np.random.choice(["value", "weight"],
                                     p=[self.input_weights[to_update], 1 - self.input_weights[to_update]])
+        # TODO, safeguard is the utmost representation of the mechanism, might be better
+        """
+        This safeguard is used to "protect the knowledge from changing", so the adaption will happen on perceptions
+        more often.
+        """
+        # ==============================================================================================================
+        if approach == "weight":
+            if random.random() < self.safeguard:
+                approach = "value"
+        # ==============================================================================================================
         # keep the weight (choice) while change the value
+        # this means "I trust my knowledge"
         if approach == "value":
             if isinstance(self.input_objects[to_update], SNode):
+                # SNode referrers to the input. Inputs cannot be changed, so it is navigated to weight change.
+                # But this is impossible when there are CNodes.
                 approach = "weight"
             else:
                 value_remain = self.input_objects[self.index_1 if to_update == self.index_2 else self.index_2].value
@@ -55,7 +70,8 @@ class AND_ONode(ONode):
                         # print("value changed")
                     else:
                         approach = "weight"
-        # Pick another weight
+        # pick another weight
+        # this means "I DON'T trust my knowledge"
         if approach == "weight":
             self.input_weights[to_update] *= self.weight_decay
             # print("weight changed")

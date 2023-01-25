@@ -1,3 +1,5 @@
+import random
+
 import numpy as np
 
 
@@ -36,7 +38,18 @@ class ARROW_ONode(ONode):
         # figure out the way to update
         approach = np.random.choice(["value", "weight"],
                                     p=[self.input_weights[to_update], 1 - self.input_weights[to_update]])
+        # TODO, safeguard is the utmost representation of the mechanism, might be better
+        """
+        This safeguard is used to "protect the knowledge from changing", so the adaption will happen on perceptions
+        more often.
+        """
+        # ==============================================================================================================
+        if approach == "weight":
+            if random.random() < self.safeguard:
+                approach = "value"
+        # ==============================================================================================================
         # keep the weight (choice) while change the value
+        # this means "I trust my knowledge"
         if approach == "value":
             if isinstance(self.input_objects[to_update], SNode):
                 approach = "weight"
@@ -66,7 +79,8 @@ class ARROW_ONode(ONode):
                             self.input_objects[to_update].backward(True)
                             self.input_weights[to_update] *= self.value_decay
                             # print("value changed")
-        # Pick another weight
+        # pick another weight
+        # this means "I DON'T trust my knowledge"
         if approach == "weight":
             self.input_weights[to_update] *= self.weight_decay
             # print("weight changed")
