@@ -3,7 +3,7 @@ import torch
 from matplotlib import pyplot as plt
 
 from Nodes.ONodes import ONodes
-from models.MNIST_NSN_784_X_X_10 import Propositional_Logic_NSN
+from models.MNIST_NSN_784_X_10 import Propositional_Logic_NSN
 from util.MNIST_data import data_train, data_test, MNIST_num
 
 ONodes = ONodes()
@@ -33,8 +33,8 @@ if __name__ == '__main__':
         # spec
         print("===================")
         num = 8
-        num_epoch = 5
-        num_train = 10
+        num_epoch = 20
+        num_train = 20
         num_test = 200
         # data generation
         dataloader_train = torch.utils.data.DataLoader(dataset=data_train, batch_size=1, shuffle=True)
@@ -70,8 +70,8 @@ if __name__ == '__main__':
         # spec
         print("===================")
         num = 3
-        num_epoch = 5
-        num_train = 10
+        num_epoch = 20
+        num_train = 20
         num_test = 200
         # data generation
         dataloader_train = torch.utils.data.DataLoader(dataset=data_train, batch_size=1, shuffle=True)
@@ -106,9 +106,9 @@ if __name__ == '__main__':
         # ==============================================================================================================
         # spec
         print("===================")
-        num = 0
-        num_epoch = 5
-        num_train = 10
+        num = 7
+        num_epoch = 20
+        num_train = 20
         num_test = 200
         # data generation
         dataloader_train = torch.utils.data.DataLoader(dataset=data_train, batch_size=1, shuffle=True)
@@ -143,9 +143,9 @@ if __name__ == '__main__':
         # ==============================================================================================================
         # spec
         print("===================")
-        num = 7
-        num_epoch = 5
-        num_train = 10
+        num = 5
+        num_epoch = 20
+        num_train = 20
         num_test = 200
         # data generation
         dataloader_train = torch.utils.data.DataLoader(dataset=data_train, batch_size=1, shuffle=True)

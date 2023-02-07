@@ -28,20 +28,29 @@ class CNode(Node):
         """
         self.pattern = []
         self.indices = []  # as a compound may have many components, it has many indices
-        self.score = 0
+        self.score = 0  # score is for the threshold to get a binary evaluation
         self.threshold = 0.5
-        self.weight_decay = 0.7
-        self.pattern_lr = 0.5
+        self.weight_decay = 0.5
+        self.pattern_lr = 0.3
         self.award = 1.5
 
+        self.mark = True
+
     def forward(self):
+
+        # # a very low chance to get a reminder
+        # if self.mark:
+        #     for i in range(len(self.input_objects)):
+        #         self.input_weights[i] += 0.01 * self.input_objects[i].value
+        # self.weight_regularize()
+
+        self.indices = []
         for i in range(len(self.input_weights)):
-            # TODO, is it possible to get a "weighted average" ?
             if random.random() < self.input_weights[i]:  # based on the weights (attention), this position is selected
                 self.indices.append(i)
                 self.score += abs(self.pattern[i] - self.input_objects[i].value)
         if self.score != 0:
-            self.score /= len(self.indices)
+            self.score /= len(self.indices) + 1
         if self.score > self.threshold:
             return True
         else:
@@ -56,7 +65,7 @@ class CNode(Node):
         CNodes has 3 failure types:
         1) weight error (my attention is not good)
         2) pattern error (my attention is good, but my pattern is not good)
-        3) value error (mu attention and pattern is good, but something is wrong with the values forwarded)
+        3) value error (my attention and pattern is good, but something is wrong with the values forwarded)
 
         Specially, in CNodes, there is a possibility with no punishment when making mistakes.
         * When the weight is really high, and when the pattern is really confident, and my pattern is consistent with
@@ -124,7 +133,7 @@ class CNode(Node):
         self.weight_regularize()
 
     def weight_regularize(self):
-        self.input_weights = list(np.array(self.input_weights) / max(self.input_weights))
+        self.input_weights = list(np.array(self.input_weights) / (0.001 + max(self.input_weights)))
 
     def boost(self):
         for each in self.indices:

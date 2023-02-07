@@ -17,9 +17,9 @@ class AND_ONode(ONode):
         self.name = "AND Operation"
         self.index_1 = -1
         self.index_2 = -1
-        self.value_decay = 0.9
-        self.weight_decay = 0.8
-        self.award = 1.1
+        self.value_decay = 0.5
+        self.weight_decay = 0.3
+        self.award = 1.5
 
     def forward(self):
         # find the indices of involved objects

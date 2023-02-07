@@ -3,20 +3,21 @@ import torch
 from matplotlib import pyplot as plt
 
 from Nodes.ONodes import ONodes
-from models.MNIST_NSN_784_X_10 import Propositional_Logic_NSN
+from models.MNIST_NSN_conv import Convolution_NSN
 from util.MNIST_data import data_train, data_test, MNIST_num
 
 ONodes = ONodes()
-NSN = Propositional_Logic_NSN(ONodes)
+NSN = Convolution_NSN(ONodes)
 
 if __name__ == '__main__':
 
     """
     The training process is seperated into several stages. Each stage will have different contents to learn.
     And the same stage might be repeated for reviewing.
-    
+
     1) Training for #8, 5 epochs.
     2) Training for #3, 5 epochs.
+    3) repeat, ...
     """
 
     great_loop = 20
@@ -59,9 +60,9 @@ if __name__ == '__main__':
                 tmp = [False for _ in range(10)]
                 tmp[num] = True
                 NSN.backward(tmp)
-            plt.subplot(2, num_epoch, img_idx)
-            img_idx += 1
-            plt.imshow(NSN.compound_layer_1.show((28, 28)), cmap="Reds")
+            # plt.subplot(2, num_epoch, img_idx)
+            # img_idx += 1
+            # plt.imshow(NSN.compound_layer_1.show((28, 28)), cmap="Reds")
             # time.sleep(3)
 
             # testing
@@ -78,8 +79,8 @@ if __name__ == '__main__':
         type_1_learning_curve.append(tmp_curve)
         # ==============================================================================================================
 
-        for each_object in NSN.compound_layer_1.objects:
-            print(len(each_object.indices))
+        # for each_object in NSN.compound_layer_1.objects:
+        #     print(len(each_object.indices))
 
         # 2nd Stage
         # ==============================================================================================================
@@ -102,9 +103,9 @@ if __name__ == '__main__':
                 tmp = [False for _ in range(10)]
                 tmp[num] = True
                 NSN.backward(tmp)
-            plt.subplot(2, num_epoch, img_idx)
-            img_idx += 1
-            plt.imshow(NSN.compound_layer_1.show((28, 28)), cmap="Blues")
+            # plt.subplot(2, num_epoch, img_idx)
+            # img_idx += 1
+            # plt.imshow(NSN.compound_layer_1.show((28, 28)), cmap="Blues")
             # time.sleep(3)
 
             # testing
@@ -121,25 +122,18 @@ if __name__ == '__main__':
         type_2_learning_curve.append(tmp_curve)
         # ==============================================================================================================
 
-        for each_object in NSN.compound_layer_1.objects:
-            print(len(each_object.indices))
+        # for each_object in NSN.compound_layer_1.objects:
+        #     print(len(each_object.indices))
 
-        plt.show()
-        NSN.draw()
-
+    #     plt.show()
+    #     NSN.draw(starting_layer=6)
+    #
     plt.figure()
     for each in type_1_learning_curve:
         plt.plot(each)
     plt.show()
 
-    print(1)
-
     plt.figure()
     for each in type_2_learning_curve:
         plt.plot(each)
-    plt.show()
-
-    print(2)
-
-    plt.figure()
     plt.show()
